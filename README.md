@@ -1,0 +1,33 @@
+#TODO:
+
+- Backend
+  - Criar estrutura modular
+  - Pacote Core
+    - config
+    - util
+    - exception
+  - modules
+    - auth
+      - entity
+      - controller
+      - repository
+      - serivce
+      - dto
+    - material
+      - entity
+      - controller
+      - repository
+      - serivce
+      - dto
+    - quiz
+      - entity
+      - controller
+      - repository
+      - serivce
+      - dto
+    - dashboard
+      - entity
+      - controller
+      - repository
+      - serivce
+      - dto
