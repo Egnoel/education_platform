@@ -37,6 +37,9 @@ public class SecurityConfig {
                         // Endpoints públicos da API
                         .requestMatchers("/api/auth/**","/api/auth/register/**", "/api/auth/login").permitAll()
                         .requestMatchers("/materials/**").hasRole("PROFESSOR") // Apenas professores
+                        .requestMatchers("/materials").hasAnyRole("TEACHER", "STUDENT")
+                        .requestMatchers("/subjects/**").hasRole("PROFESSOR") // Apenas professores
+                        .requestMatchers("/subjects").hasAnyRole("TEACHER", "STUDENT")
                         .requestMatchers("/quizzes/**").hasRole("PROFESSOR") // Apenas professores criam questionários
                         .requestMatchers("/classes/**").hasRole("PROFESSOR") // Apenas professores criam turmas
                         .requestMatchers("/dashboard").hasAnyRole("PROFESSOR", "ALUNO")

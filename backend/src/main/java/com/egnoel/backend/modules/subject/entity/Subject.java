@@ -26,7 +26,7 @@ public class Subject {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String code;
 
     @ManyToOne
