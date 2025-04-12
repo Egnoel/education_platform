@@ -50,9 +50,10 @@ public class AssessmentService {
         Classe classe = classeRepository.findById(dto.getClasseId())
                 .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
 
-        // Validar se o aluno pertence à turma (supondo que existe uma relação em Classe)
-        // Exemplo: classe.getStudents().contains(student)
-        // Como não temos essa relação explícita, assumimos válida por enquanto
+        // Validar se o aluno está inscrito na turma
+        if (!classe.getStudents().contains(student)) {
+            throw new RuntimeException("O aluno " + student.getFirstName() + " " + student.getLastName() + " não está inscrito nesta turma");
+        }
 
         // Validar se o professor leciona a turma
         if (!classe.getTeacher().getId().equals(teacher.getId())) {

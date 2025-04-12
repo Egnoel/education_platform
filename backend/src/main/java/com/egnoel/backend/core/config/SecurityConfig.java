@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/quizzes").hasAnyRole("TEACHER", "STUDENT") // Listagem de quizzes
                         .requestMatchers("/classes/**").hasRole("TEACHER")
                         .requestMatchers("/classes").hasAnyRole("TEACHER", "STUDENT")
+                        .requestMatchers("/classes", "/classes/student/**").hasAnyRole("TEACHER", "STUDENT")
                         .requestMatchers("/academic-years/**").hasRole("ADMIN")
                         .requestMatchers("/academic-years", "/academic-years/active").hasAnyRole("ADMIN", "TEACHER", "STUDENT")
                         .requestMatchers("/assessments/**").hasRole("TEACHER")

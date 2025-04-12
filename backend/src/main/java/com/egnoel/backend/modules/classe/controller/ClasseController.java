@@ -1,9 +1,6 @@
 package com.egnoel.backend.modules.classe.controller;
 
-import com.egnoel.backend.modules.classe.dto.AddStudentsDTO;
-import com.egnoel.backend.modules.classe.dto.ClasseCreateDTO;
-import com.egnoel.backend.modules.classe.dto.ClasseResponseDTO;
-import com.egnoel.backend.modules.classe.dto.ClasseUpdateDTO;
+import com.egnoel.backend.modules.classe.dto.*;
 import com.egnoel.backend.modules.classe.service.ClasseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,5 +55,25 @@ public class ClasseController {
     @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<ClasseResponseDTO> removeStudents(@PathVariable Long id, @Valid @RequestBody AddStudentsDTO dto) {
         return ResponseEntity.ok(classeService.removeStudents(id, dto));
+    }
+
+    @PostMapping("/{id}/students")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<ClasseResponseDTO> addStudentsToClasse(@PathVariable Long id,
+                                                                 @Valid @RequestBody AddStudentsToClasseDTO dto) {
+        return ResponseEntity.ok(classeService.addStudentsToClasse(id, dto));
+    }
+
+    @DeleteMapping("/{id}/students")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<ClasseResponseDTO> removeStudentsFromClasse(@PathVariable Long id,
+                                                                      @Valid @RequestBody AddStudentsToClasseDTO dto) {
+        return ResponseEntity.ok(classeService.removeStudentsFromClasse(id, dto));
+    }
+
+    @GetMapping("/student/{studentId}")
+    @PreAuthorize("hasAnyRole('TEACHER', 'STUDENT')")
+    public ResponseEntity<List<ClasseResponseDTO>> listClassesByStudent(@PathVariable Long studentId) {
+        return ResponseEntity.ok(classeService.listClassesByStudent(studentId));
     }
 }

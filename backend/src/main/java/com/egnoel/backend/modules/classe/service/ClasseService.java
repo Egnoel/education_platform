@@ -6,10 +6,8 @@ import com.egnoel.backend.modules.auth.entity.Student;
 import com.egnoel.backend.modules.auth.entity.Teacher;
 import com.egnoel.backend.modules.auth.repository.StudentRepository;
 import com.egnoel.backend.modules.auth.repository.TeacherRepository;
-import com.egnoel.backend.modules.classe.dto.AddStudentsDTO;
-import com.egnoel.backend.modules.classe.dto.ClasseCreateDTO;
-import com.egnoel.backend.modules.classe.dto.ClasseResponseDTO;
-import com.egnoel.backend.modules.classe.dto.ClasseUpdateDTO;
+import com.egnoel.backend.modules.auth.repository.UserRepository;
+import com.egnoel.backend.modules.classe.dto.*;
 import com.egnoel.backend.modules.classe.entity.Classe;
 import com.egnoel.backend.modules.classe.repository.ClasseRepository;
 import com.egnoel.backend.modules.subject.entity.Subject;
@@ -26,6 +24,7 @@ import java.util.stream.Collectors;
 public class ClasseService {
     private final ClasseRepository classeRepository;
     private final TeacherRepository teacherRepository;
+    private final UserRepository userRepository;
     private final SubjectRepository subjectRepository;
     private final AcademicYearRepository academicYearRepository;
     private final StudentRepository studentRepository;
@@ -33,12 +32,13 @@ public class ClasseService {
     @Autowired
     public ClasseService(ClasseRepository classeRepository, TeacherRepository teacherRepository,
                          SubjectRepository subjectRepository, AcademicYearRepository academicYearRepository,
-                         StudentRepository studentRepository) {
+                         UserRepository userRepository,  StudentRepository studentRepository) {
         this.classeRepository = classeRepository;
         this.teacherRepository = teacherRepository;
         this.subjectRepository = subjectRepository;
         this.academicYearRepository = academicYearRepository;
         this.studentRepository = studentRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -78,6 +78,115 @@ public class ClasseService {
                 teacher.getFirstName() + " " + teacher.getLastName(),
                 List.of()
         );
+    }
+
+    @Transactional
+    public ClasseResponseDTO addStudentsToClasse(Long classeId, AddStudentsToClasseDTO dto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Teacher teacher = (Teacher) userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+
+        Classe classe = classeRepository.findById(classeId)
+                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+
+        if (!classe.getTeacher().getId().equals(teacher.getId())) {
+            throw new RuntimeException("Apenas o professor da turma pode adicionar alunos");
+        }
+
+        List<Student> students = userRepository.findAllById(dto.getStudentIds()).stream()
+                .filter(u -> u instanceof Student)
+                .map(u -> (Student) u)
+                .collect(Collectors.toList());
+
+        if (students.size() != dto.getStudentIds().size()) {
+            throw new RuntimeException("Um ou mais alunos não foram encontrados");
+        }
+
+        for (Student student : students) {
+            if (!student.getInstitution().getId().equals(classe.getAcademicYear().getInstitution().getId())) {
+                throw new RuntimeException("O aluno " + student.getFirstName() + " " + student.getLastName() + " não pertence à mesma instituição da turma");
+            }
+            if (!classe.getStudents().contains(student)) {
+                classe.getStudents().add(student);
+            }
+        }
+
+        classe = classeRepository.save(classe);
+
+        return new ClasseResponseDTO(
+                classe.getId(),
+                classe.getName(),
+                classe.getCreationDate(),
+                classe.getAcademicYear().getName(),
+                classe.getSubject().getName(),
+                teacher.getFirstName() + " " + teacher.getLastName(),
+                classe.getStudents().stream()
+                        .map(s -> s.getFirstName() + " " + s.getLastName())
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @Transactional
+    public ClasseResponseDTO removeStudentsFromClasse(Long classeId, AddStudentsToClasseDTO dto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Teacher teacher = (Teacher) userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
+
+        Classe classe = classeRepository.findById(classeId)
+                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+
+        if (!classe.getTeacher().getId().equals(teacher.getId())) {
+            throw new RuntimeException("Apenas o professor da turma pode remover alunos");
+        }
+
+        List<Student> students = userRepository.findAllById(dto.getStudentIds()).stream()
+                .filter(u -> u instanceof Student)
+                .map(u -> (Student) u)
+                .toList();
+
+        if (students.size() != dto.getStudentIds().size()) {
+            throw new RuntimeException("Um ou mais alunos não foram encontrados");
+        }
+
+        for (Student student : students) {
+            if (!classe.getStudents().contains(student)) {
+                throw new RuntimeException("O aluno " + student.getFirstName() + " " + student.getLastName() + " não está inscrito nesta turma");
+            }
+            classe.getStudents().remove(student);
+        }
+
+        classe = classeRepository.save(classe);
+
+        return new ClasseResponseDTO(
+                classe.getId(),
+                classe.getName(),
+                classe.getCreationDate(),
+                classe.getAcademicYear().getName(),
+                classe.getSubject().getName(),
+                teacher.getFirstName() + " " + teacher.getLastName(),
+                classe.getStudents().stream()
+                        .map(s -> s.getFirstName() + " " + s.getLastName())
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public List<ClasseResponseDTO> listClassesByStudent(Long studentId) {
+        Student student = (Student) userRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+
+        return classeRepository.findByStudentId(studentId).stream()
+                .map(c -> new ClasseResponseDTO(
+                        c.getId(),
+                        c.getName(),
+                        c.getCreationDate(),
+                        c.getAcademicYear().getName(),
+                        c.getSubject().getName(),
+                        c.getTeacher().getFirstName() + " " + c.getTeacher().getLastName(),
+                        c.getStudents().stream()
+                                .map(s -> s.getFirstName() + " " + s.getLastName())
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
     }
 
     @Transactional

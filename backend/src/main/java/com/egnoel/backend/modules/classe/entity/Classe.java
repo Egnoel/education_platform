@@ -49,8 +49,8 @@ public class Classe {
 
     @ManyToMany
     @JoinTable(
-            name = "class_student",
-            joinColumns = @JoinColumn(name = "class_id"),
+            name = "classe_students",
+            joinColumns = @JoinColumn(name = "classe_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
     private List<Student> students = new ArrayList<>();

@@ -9,4 +9,5 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     List<Material> findByTeacherId(Long teacherId);
     List<Material> findBySubjectId(Long subjectId);
     List<Material> findByClasseId(Long classeId);
+    List<Material> findByClasseIdIn(List<Long> classeIds);
 }
