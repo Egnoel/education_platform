@@ -1,8 +1,6 @@
 package com.egnoel.backend.modules.institution.controller;
 
-import com.egnoel.backend.modules.institution.dto.InstitutionCreateDTO;
-import com.egnoel.backend.modules.institution.dto.InstitutionResponseDTO;
-import com.egnoel.backend.modules.institution.dto.InstitutionUpdateDTO;
+import com.egnoel.backend.modules.institution.dto.*;
 import com.egnoel.backend.modules.institution.service.InstitutionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,5 +50,25 @@ public class InstitutionController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<InstitutionResponseDTO> getInstitution(@PathVariable Long id) {
         return ResponseEntity.ok(institutionService.getInstitution(id));
+    }
+
+    @PostMapping("/{id}/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<InstitutionResponseDTO> addUsersToInstitution(@PathVariable Long id,
+                                                                        @Valid @RequestBody AddUsersToInstitutionDTO dto) {
+        return ResponseEntity.ok(institutionService.addUsersToInstitution(id, dto));
+    }
+
+    @DeleteMapping("/{id}/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<InstitutionResponseDTO> removeUsersFromInstitution(@PathVariable Long id,
+                                                                             @Valid @RequestBody AddUsersToInstitutionDTO dto) {
+        return ResponseEntity.ok(institutionService.removeUsersFromInstitution(id, dto));
+    }
+
+    @GetMapping("/{id}/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserResponseDTO>> listInstitutionUsers(@PathVariable Long id) {
+        return ResponseEntity.ok(institutionService.listInstitutionUsers(id));
     }
 }
