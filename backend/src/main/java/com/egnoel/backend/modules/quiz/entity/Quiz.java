@@ -39,7 +39,7 @@ public class Quiz {
     private Subject subject;
 
     @ManyToOne
-    @JoinColumn(name = "classe_id", nullable = false)
+    @JoinColumn(name = "classe_id")
     private Classe classe;
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)

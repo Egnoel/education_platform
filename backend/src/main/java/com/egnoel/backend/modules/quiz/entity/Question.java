@@ -24,10 +24,12 @@ public class Question {
     private QuestionType type;
 
     private String options;
-    @Column(nullable = false)
+
+    @Column
     private String correctAnswer;
 
-    private Integer score;
+    @Column(nullable = false)
+    private Integer score = 0;
 
     @ManyToOne
     @JoinColumn(name = "quiz_id", nullable = false)

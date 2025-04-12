@@ -33,16 +33,23 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Desativa CSRF usando lambda
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sessão stateless
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger-ui/**","/swagger-ui/index.html", "/api-docs/**").permitAll()
-                        // Endpoints públicos da API
-                        .requestMatchers("/api/auth/**","/api/auth/register/**", "/api/auth/login").permitAll()
-                        .requestMatchers("/materials/**").hasRole("PROFESSOR") // Apenas professores
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui/index.html", "/api-docs/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/auth/register/**", "/api/auth/login").permitAll()
+                        .requestMatchers("/materials/**").hasRole("TEACHER")
                         .requestMatchers("/materials").hasAnyRole("TEACHER", "STUDENT")
-                        .requestMatchers("/subjects/**").hasRole("PROFESSOR") // Apenas professores
+                        .requestMatchers("/subjects/**").hasRole("TEACHER") // Ajustado de PROFESSOR para TEACHER
                         .requestMatchers("/subjects").hasAnyRole("TEACHER", "STUDENT")
-                        .requestMatchers("/quizzes/**").hasRole("PROFESSOR") // Apenas professores criam questionários
-                        .requestMatchers("/classes/**").hasRole("PROFESSOR") // Apenas professores criam turmas
-                        .requestMatchers("/dashboard").hasAnyRole("PROFESSOR", "ALUNO")
+                        .requestMatchers("/quizzes/*/questions/**").hasRole("TEACHER") // Apenas professores criam/editam/excluem perguntas
+                        .requestMatchers("/quizzes/*/questions").hasAnyRole("TEACHER", "STUDENT") // Listagem de perguntas
+                        .requestMatchers("/quizzes/*/answers").hasRole("TEACHER") // Professores listam respostas
+                        .requestMatchers("/quizzes/*/answers/**").hasRole("STUDENT") // Alunos submetem respostas
+                        .requestMatchers("/quizzes/**").hasRole("TEACHER") // Criação/edição/exclusão de quizzes
+                        .requestMatchers("/quizzes").hasAnyRole("TEACHER", "STUDENT") // Listagem de quizzes
+                        .requestMatchers("/classes/**").hasRole("TEACHER")
+                        .requestMatchers("/classes").hasAnyRole("TEACHER", "STUDENT")
+                        .requestMatchers("/academic-years/**").hasRole("ADMIN")
+                        .requestMatchers("/academic-years", "/academic-years/active").hasAnyRole("ADMIN", "TEACHER", "STUDENT")
+                        .requestMatchers("/dashboard").hasAnyRole("TEACHER", "STUDENT")
                         .requestMatchers("/institutions/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

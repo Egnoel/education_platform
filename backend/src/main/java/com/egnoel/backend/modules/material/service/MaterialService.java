@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ public class MaterialService {
     private final SubjectRepository subjectRepository;
     private final ClasseRepository classeRepository;
 
-    private static final String UPLOAD_DIR = "uploads/";
+    private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 
     @Autowired
     public MaterialService(MaterialRepository materialRepository, TeacherRepository teacherRepository,
@@ -55,17 +56,26 @@ public class MaterialService {
                     .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
         }
 
+        if (dto.getFile() == null || dto.getFile().isEmpty()) {
+            throw new RuntimeException("Ficheiro não fornecido");
+        }
+
         String fileName = dto.getFile().getOriginalFilename();
         String filePath = UPLOAD_DIR + System.currentTimeMillis() + "_" + fileName; // Evita sobrescrita
         try {
             File directory = new File(UPLOAD_DIR);
             if (!directory.exists()) {
-                directory.mkdirs(); // Cria o diretório se não existir
+                boolean created = directory.mkdirs();
+                if (!created) {
+                    throw new RuntimeException("Não foi possível criar o diretório: " + UPLOAD_DIR);
+                }
             }
-            dto.getFile().transferTo(new File(filePath));
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao salvar o ficheiro: " + e.getMessage());
+            File destFile = new File(filePath);
+            dto.getFile().transferTo(destFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao salvar o ficheiro: " + e.getMessage(), e);
         }
+
 
         Material material = new Material();
         material.setTitle(dto.getTitle());

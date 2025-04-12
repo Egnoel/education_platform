@@ -30,9 +30,9 @@ public class Answer {
     @Column(nullable = false)
     private String answers;
 
-    @Column(nullable = false)
-    private Integer score;
+    @Column
+    private Integer score = 0;
 
     @Column(updatable = false)
-    private LocalDateTime sumittedAt = LocalDateTime.now();
+    private LocalDateTime submittedAt = LocalDateTime.now();
 }

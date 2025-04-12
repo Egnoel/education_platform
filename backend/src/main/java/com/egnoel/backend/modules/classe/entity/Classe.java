@@ -5,16 +5,22 @@ import com.egnoel.backend.modules.auth.entity.Student;
 import com.egnoel.backend.modules.auth.entity.Teacher;
 import com.egnoel.backend.modules.subject.entity.Subject;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "classes")
+@Table(
+        name = "classes",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "academic_year_id", "subject_id", "teacher_id"})
+)
 @Data
 public class Classe {
 
@@ -23,7 +29,11 @@ public class Classe {
     private Long id;
 
     @Column(nullable = false)
+    @Size(max = 100, message = "O nome da turma deve ter até 100 caracteres")
     private String name;
+
+    @Column(updatable = false)
+    private LocalDateTime creationDate = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "academic_year_id", nullable = false)
@@ -40,8 +50,8 @@ public class Classe {
     @ManyToMany
     @JoinTable(
             name = "class_student",
-            joinColumns = @JoinColumn(name = "classe_id"),
+            joinColumns = @JoinColumn(name = "class_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
-    private List<Student> students;
+    private List<Student> students = new ArrayList<>();
 }
