@@ -54,6 +54,10 @@ public class ClasseService {
             throw new RuntimeException("Não é possível criar turmas em um ano letivo inativo");
         }
 
+        if (!teacher.getInstitution().getId().equals(academicYear.getInstitution().getId())) {
+            throw new RuntimeException("O professor deve pertencer à mesma instituição do ano letivo");
+        }
+
         Subject subject = subjectRepository.findById(dto.getSubjectId())
                 .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
 
