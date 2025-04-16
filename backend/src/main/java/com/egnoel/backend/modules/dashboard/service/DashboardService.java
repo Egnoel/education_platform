@@ -97,7 +97,7 @@ public class DashboardService {
                 .map(q -> new QuizDTO(
                         q.getId(),
                         q.getTitle(),
-                        q.getClasse().getName(),
+                        q.getClasse() != null ? q.getClasse().getName() : null,
                         q.getCreationDate(),
                         false // Simplificação: lógica de respostas pendentes a implementar
                 ))
@@ -113,7 +113,7 @@ public class DashboardService {
                         a.getId(),
                         a.getTitle(),
                         a.getGrade(),
-                        a.getClasse().getName(),
+                        a.getClasse() != null ? a.getClasse().getName() : null,
                         a.getStudent().getFirstName() + " " + a.getStudent().getLastName(),
                         a.getDate()
                 ))
@@ -166,7 +166,7 @@ public class DashboardService {
                 .map(q -> new QuizDTO(
                         q.getId(),
                         q.getTitle(),
-                        q.getClasse().getName(),
+                        q.getClasse() != null ? q.getClasse().getName() : null,
                         q.getCreationDate(),
                         true // Simplificação: assumir pendente até lógica de respostas
                 ))
@@ -180,7 +180,7 @@ public class DashboardService {
                         a.getId(),
                         a.getTitle(),
                         a.getGrade(),
-                        a.getClasse().getName(),
+                        a.getClasse() != null ? a.getClasse().getName() : null,
                         null, // Não incluir studentName para aluno
                         a.getDate()
                 ))

@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EduConnect - Plataforma Educacional
 
-## Getting Started
+EduConnect é uma aplicação frontend desenvolvida em Next.js 14 para integração com um backend Spring Boot, destinada a conectar professores e alunos através de turmas, materiais didáticos, quizzes e avaliações.
 
-First, run the development server:
+## Características
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Autenticação JWT**: Sistema completo de login e registo
+- **Interface em Português (Portugal)**: Toda a UI está em português de Portugal
+- **Design Responsivo**: Funciona em dispositivos móveis, tablets e desktops
+- **Integração com API**: Preparado para se conectar a um backend Spring Boot
+- **Componentes Reutilizáveis**: Utiliza Shadcn/UI para componentes consistentes
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tecnologias Utilizadas
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Next.js 14** com App Router
+- **TypeScript**
+- **Tailwind CSS**
+- **Shadcn/UI**
+- **React Query** para gestão de estado e chamadas à API
+- **React Context** para gestão de autenticação
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Requisitos
 
-## Learn More
+- Node.js 18.17 ou superior
+- NPM ou Yarn
 
-To learn more about Next.js, take a look at the following resources:
+## Instalação
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone o repositório:
+   \`\`\`bash
+   git clone https://github.com/seu-usuario/educonnect.git
+   cd educonnect
+   \`\`\`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Instale as dependências:
+   \`\`\`bash
+   npm install
+   # ou
+   yarn
+   \`\`\`
 
-## Deploy on Vercel
+3. Configure as variáveis de ambiente:
+   Crie um arquivo `.env.local` na raiz do projeto com o seguinte conteúdo:
+   \`\`\`
+   NEXT_PUBLIC_API_URL=http://localhost:8080
+   \`\`\`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Inicie o servidor de desenvolvimento:
+   \`\`\`bash
+   npm run dev
+   # ou
+   yarn dev
+   \`\`\`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. Acesse a aplicação em [http://localhost:3000](http://localhost:3000)
+
+## Estrutura do Projeto
+
+\`\`\`
+/app                    # Diretório principal do App Router
+  /login                # Página de login
+  /register             # Página de registo
+  /dashboard            # Painel de controlo
+  /classes              # Gestão de turmas
+  /materials            # Materiais didáticos
+  /quizzes              # Quizzes
+  /assessments          # Avaliações
+  /profile              # Perfil do utilizador
+  /layout.tsx           # Layout global da aplicação
+  /page.tsx             # Página inicial (landing page)
+/components             # Componentes reutilizáveis
+  /ui                   # Componentes Shadcn/UI
+  /Navbar.tsx           # Barra de navegação
+  /Sidebar.tsx          # Barra lateral
+  /AppLayout.tsx        # Layout para páginas autenticadas
+  /ProtectedRoute.tsx   # Componente para proteger rotas
+/lib                    # Utilitários e funções auxiliares
+  /api.ts               # Cliente HTTP para chamadas à API
+  /auth.ts              # Funções de autenticação
+  /context              # Contextos React
+    /AuthContext.tsx    # Contexto de autenticação
+    /QueryProvider.tsx  # Provedor do React Query
+/hooks                  # Hooks personalizados
+  /use-mobile.tsx       # Hook para detetar dispositivos móveis
+/public                 # Arquivos estáticos
+\`\`\`
+
+## Integração com o Backend
+
+A aplicação está configurada para se conectar a um backend Spring Boot em `http://localhost:8080`. Os endpoints esperados são:
+
+- **Autenticação**:
+  - `POST /api/auth/login`: Login com email e password
+  - `POST /api/auth/register`: Registo de novos utilizadores
+
+- **Dashboard**:
+  - `GET /dashboard`: Dados do painel de controlo
+
+- **Turmas**:
+  - `GET /classes`: Listar turmas
+  - `POST /classes`: Criar turma
+  - `GET /classes/student/:id`: Turmas do aluno
+  - `POST /classes/:id/students`: Adicionar alunos à turma
+  - `DELETE /classes/:id/students`: Remover alunos da turma
+
+- **Materiais**:
+  - `GET /materials`: Listar materiais
+  - `POST /materials`: Criar material
+
+- **Quizzes**:
+  - `GET /quizzes`: Listar quizzes
+  - `POST /quizzes`: Criar quiz
+
+- **Avaliações**:
+  - `GET /assessments/student/:id`: Avaliações do aluno
+  - `GET /assessments/classe/:id`: Avaliações da turma
+  - `POST /assessments`: Criar avaliação
+
+## Personalização
+
+### Cores
+
+As cores principais da aplicação são:
+- **Azul escuro** (#1E40AF): Elementos primários como cabeçalhos e botões
+- **Azul claro** (#60A5FA): Elementos de destaque e acentos
+- **Branco/Cinza claro** (#F9FAFB): Fundos e áreas de conteúdo
+
+Para alterar as cores, edite o arquivo `tailwind.config.ts`.
+
+### Componentes Shadcn/UI
+
+Para adicionar ou personalizar componentes Shadcn/UI:
+
+\`\`\`bash
+npx shadcn@latest add [nome-do-componente]
+\`\`\`
+
+Os componentes serão adicionados ao diretório `/components/ui`.
+
+## Licença
+
+Este projeto está licenciado sob a licença MIT.

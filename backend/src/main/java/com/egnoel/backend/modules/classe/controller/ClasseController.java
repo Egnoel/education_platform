@@ -44,19 +44,21 @@ public class ClasseController {
     public ResponseEntity<List<ClasseResponseDTO>> listClasses() {
         return ResponseEntity.ok(classeService.listClasses());
     }
+    /*
+       @PostMapping("/{id}/students")
+       @PreAuthorize("hasRole('TEACHER')")
+       public ResponseEntity<ClasseResponseDTO> addStudents(@PathVariable Long id, @Valid @RequestBody AddStudentsDTO dto) {
+           return ResponseEntity.ok(classeService.addStudents(id, dto));
+       }
 
-    @PostMapping("/{id}/students")
-    @PreAuthorize("hasRole('TEACHER')")
-    public ResponseEntity<ClasseResponseDTO> addStudents(@PathVariable Long id, @Valid @RequestBody AddStudentsDTO dto) {
-        return ResponseEntity.ok(classeService.addStudents(id, dto));
-    }
 
-    @DeleteMapping("/{id}/students")
-    @PreAuthorize("hasRole('TEACHER')")
-    public ResponseEntity<ClasseResponseDTO> removeStudents(@PathVariable Long id, @Valid @RequestBody AddStudentsDTO dto) {
-        return ResponseEntity.ok(classeService.removeStudents(id, dto));
-    }
 
+       @DeleteMapping("/{id}/students")
+       @PreAuthorize("hasRole('TEACHER')")
+       public ResponseEntity<ClasseResponseDTO> removeStudents(@PathVariable Long id, @Valid @RequestBody AddStudentsDTO dto) {
+           return ResponseEntity.ok(classeService.removeStudents(id, dto));
+       }
+   */
     @PostMapping("/{id}/students")
     @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<ClasseResponseDTO> addStudentsToClasse(@PathVariable Long id,
